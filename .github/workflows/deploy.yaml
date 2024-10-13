@@ -37,6 +37,13 @@ jobs:
             run: |
               chmod +x deploy.sh
               echo yes | ./deploy.sh
+
+          - name: Add host keys to known_hosts
+            run: |
+              db_public_hostname=$(terraform output -raw db_public_hostname)
+              app_public_hostname=$(terraform output -raw app_public_hostname)
+              ssh-keyscan -H $db_public_hostname >> ~/.ssh/known_hosts
+              ssh-keyscan -H $app_public_hostname >> ~/.ssh/known_hosts
     
           - name: Destroy Terraform on failure
             if: failure()
