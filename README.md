@@ -59,6 +59,6 @@ The file 'deploy.sh' can be run manually to automate Ansible, and Terraform scri
 4. deploy.sh: Shell script to deploy the application.
 5. infra/: Directory containing Terraform configuration files.
 
-<img src=./misc/foo_app-working.png>
-<img src=./misc/foo_db-working.png>
+<img src=terraformtest/misc/foo_app-working.png>
+<img src=terraformtest/misc/foo_db-working.png>
 
