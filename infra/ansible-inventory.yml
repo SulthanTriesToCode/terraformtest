@@ -1,0 +1,8 @@
+boxen:
+  hosts:
+    app_servers:
+      ansible_host: ec2-3-237-172-183.compute-1.amazonaws.com
+    db_servers:
+      ansible_host: ec2-44-220-190-99.compute-1.amazonaws.com
+    app-clone_servers:
+      ansible_host: ec2-44-192-82-204.compute-1.amazonaws.com

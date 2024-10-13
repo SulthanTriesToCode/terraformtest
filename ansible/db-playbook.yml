@@ -1,0 +1,52 @@
+---
+- name: Configure database server
+  hosts: db_servers
+  remote_user: ubuntu
+  become: yes # sudo
+
+  tasks:
+  - name: Install required system packages for Docker
+    apt:
+      pkg:
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - software-properties-common
+        - python3-pip
+        - virtualenv
+        - python3-setuptools
+      state: latest
+      update_cache: true
+
+  - name: Add Docker GPG apt Key
+    apt_key:
+      url: https://download.docker.com/linux/ubuntu/gpg
+      state: present
+
+  - name: Add Docker Repository
+    apt_repository:
+      repo: deb https://download.docker.com/linux/ubuntu jammy stable
+      state: present
+
+  - name: Update apt and install docker-ce
+    apt:
+      name: docker-ce
+      state: latest
+      update_cache: true
+  - name: Create "app" directory on server
+    ansible.builtin.file:
+      path: misc/
+      state: directory
+      group: ubuntu
+      mode: '774'
+  - name : copy database file
+    ansible.posix.synchronize:
+      src: ../misc/snapshot-prod-data.sql
+      dest: misc/snapshot-prod-data.sql
+      rsync_opts:
+        - "--no-motd"
+
+  - name: Create & run database container
+    shell: docker run --name foo_db -e POSTGRES_PASSWORD=devops -e POSTGRES_USER=pete -e POSTGRES_DB=foo -p 0.0.0.0:5432:5432 -v "$PWD"/misc/snapshot-prod-data.sql:/docker-entrypoint-initdb.d/init.sql -d postgres:14.7
+  
+

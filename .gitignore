@@ -1,0 +1,39 @@
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Logs
+logs/
+*.log
+*.log.*
+
+# Dependency directories
+**/node_modules/
+
+# Build directories
+dist/
+build/
+
+# Docker
+**/Dockerfile
+
+# Ansible
+ansible/terraform.tfstate
+
+# Terraform
+**/.terraform/
+**/.terraform.lock.hcl
+**/terraform.tfstate
+**/terraform.tfstate.backup
+
+# Keys
+infra/my_A2_key
+infra/my_A2_key.pub
+
+# Miscellaneous
+.DS_Store
+Thumbs.db
+
+# Ignore all files in misc/ directory
+misc/*
