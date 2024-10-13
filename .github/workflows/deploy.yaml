@@ -40,6 +40,7 @@ jobs:
 
           - name: Run deploy script
             run: |
+              cd ..
               chmod +x deploy.sh
               echo yes | ./deploy.sh
     
