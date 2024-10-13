@@ -1,0 +1,72 @@
+name: Deploy
+
+on:
+    push:
+        branches:
+            - main
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+
+        steps:
+          - name: Checkout repository
+            uses: actions/checkout@v2
+    
+          - name: Set up AWS CLI
+            uses: aws-actions/configure-aws-credentials@v1
+            with:
+              aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+              aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+              aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+              aws-region: us-east-1
+    
+          - name: Install dependencies
+            run: |
+              sudo apt-get update
+              sudo apt-get install -y jq sshpass
+    
+          - name: Install Terraform
+            run: |
+              sudo apt update && sudo apt install -y gpg
+              wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+              echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+              sudo apt update
+              sudo apt install -y terraform
+    
+          - name: Initialize Terraform
+            run: |
+              cd infra
+              terraform init
+    
+          - name: Plan Terraform
+            id: plan
+            run: |
+              cd infra
+              terraform plan -out=tfplan
+              terraform show -json tfplan > tfplan.json
+    
+          - name: Check for Terraform changes
+            id: check_changes
+            run: |
+              cd infra
+              changes=$(jq '.resource_changes | length' tfplan.json)
+              echo "::set-output name=changes::$changes"
+    
+          - name: Apply Terraform
+            if: steps.check_changes.outputs.changes != '0'
+            run: |
+              cd infra
+              terraform apply -auto-approve tfplan
+    
+          - name: Run deploy script
+            if: steps.check_changes.outputs.changes != '0'
+            run: |
+              chmod +x deploy.sh
+              echo yes | ./deploy.sh
+    
+          - name: Destroy Terraform on failure
+            if: failure()
+            run: |
+              cd infra
+              terraform destroy -auto-approve
