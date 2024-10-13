@@ -43,26 +43,6 @@ jobs:
               chmod +x deploy.sh
               echo yes | ./deploy.sh
     
-          - name: Plan Terraform
-            id: plan
-            run: |
-              cd infra
-              terraform plan -out=tfplan
-              terraform show -json tfplan > tfplan.json
-    
-          - name: Check for Terraform changes
-            id: check_changes
-            run: |
-              cd infra
-              changes=$(jq '.resource_changes | length' tfplan.json)
-              echo "::set-output name=changes::$changes"
-    
-          - name: Apply Terraform
-            if: steps.check_changes.outputs.changes != '0'
-            run: |
-              cd infra
-              terraform apply -auto-approve tfplan
-    
           - name: Destroy Terraform on failure
             if: failure()
             run: |
