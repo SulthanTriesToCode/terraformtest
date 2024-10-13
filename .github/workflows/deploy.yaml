@@ -37,6 +37,11 @@ jobs:
             run: |
               cd infra
               terraform init
+
+          - name: Run deploy script
+            run: |
+              chmod +x deploy.sh
+              echo yes | ./deploy.sh
     
           - name: Plan Terraform
             id: plan
@@ -57,12 +62,6 @@ jobs:
             run: |
               cd infra
               terraform apply -auto-approve tfplan
-    
-          - name: Run deploy script
-            if: steps.check_changes.outputs.changes != '0'
-            run: |
-              chmod +x deploy.sh
-              echo yes | ./deploy.sh
     
           - name: Destroy Terraform on failure
             if: failure()
