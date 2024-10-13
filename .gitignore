@@ -27,10 +27,6 @@ ansible/terraform.tfstate
 **/terraform.tfstate
 **/terraform.tfstate.backup
 
-# Keys
-infra/my_A2_key
-infra/my_A2_key.pub
-
 # Miscellaneous
 .DS_Store
 Thumbs.db
