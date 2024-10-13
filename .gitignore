@@ -30,6 +30,3 @@ ansible/terraform.tfstate
 # Miscellaneous
 .DS_Store
 Thumbs.db
-
-# Ignore all files in misc/ directory
-misc/*
