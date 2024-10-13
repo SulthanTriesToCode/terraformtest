@@ -19,6 +19,8 @@ The problem is solved by using a combination of AWS, EC2, Ansible, and Terraform
 - **Key Pair**: An SSH key pair for accessing the instances, created during the deployment process.
 
 #### Key data flows
+<img src="misc/DataDiagram.png" style="height: 200px;"/>
+
 1. **User Requests**: Users send requests to the Load Balancer, which distributes the traffic to the app instances.
 2. **App to Database**: The app instances communicate with the database instance over a private network.
 3. **App Clone**: The app clone instance is used for redundancy and load balancing.
@@ -59,6 +61,6 @@ The file 'deploy.sh' can be run manually to automate Ansible, and Terraform scri
 4. deploy.sh: Shell script to deploy the application.
 5. infra/: Directory containing Terraform configuration files.
 
-<img src=terraformtest/misc/foo_app-working.png>
-<img src=terraformtest/misc/foo_db-working.png>
+<img src="misc/foo_app-working.png" style="height: 200px;"/>
+<img src="misc/foo_db-working.png" style="height: 200px;"/>
 
