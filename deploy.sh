@@ -32,9 +32,8 @@ app_public_hostname=$(jq -r '.app_public_hostname.value' outputs.json)
 
 #run db playbook yml
 echo "Running ansible to configure app - db"
-export ANSIBLE_HOST_KEY_CHECKING=False
 cd .. # Back to root of lab
-ansible-playbook ansible/db-playbook.yml -i infra/ansible-inventory.yml --private-key "infra/my_A2_key"
+ansible-playbook ansible/db-playbook.yml -i infra/ansible-inventory.yml --private-key "${GITHUB_WORKSPACE}/infra/my_A2_key"
 
 #run app playbook yml
 echo "Running ansible to configure App"
