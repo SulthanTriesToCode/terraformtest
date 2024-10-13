@@ -39,6 +39,8 @@ jobs:
               terraform init
 
           - name: Run deploy script
+            env:
+              ANSIBLE_HOST_KEY_CHECKING: "False"
             run: |
               chmod +x deploy.sh
               echo yes | ./deploy.sh
