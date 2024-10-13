@@ -34,12 +34,12 @@ app_public_hostname=$(jq -r '.app_public_hostname.value' outputs.json)
 echo "Running ansible to configure app - db"
 export ANSIBLE_HOST_KEY_CHECKING=False
 cd .. # Back to root of lab
-ansible-playbook ansible/db-playbook.yml -i infra/ansible-inventory.yml --private-key "infra/my_A2_key" -auto-approve
+ansible-playbook ansible/db-playbook.yml -i infra/ansible-inventory.yml --private-key "infra/my_A2_key"
 
 #run app playbook yml
 echo "Running ansible to configure App"
-ansible-playbook ansible/app-playbook.yml -e "db_public_hostname=${db_public_hostname}" -i infra/ansible-inventory.yml --private-key "infra/my_A2_key" -auto-approve
+ansible-playbook ansible/app-playbook.yml -e "db_public_hostname=${db_public_hostname}" -i infra/ansible-inventory.yml --private-key "infra/my_A2_key"
 
 #run app-clone playbook yml
 echo "Running ansible to configure App Clone"
-ansible-playbook ansible/app-clone-playbook.yml -e "db_public_hostname=${db_public_hostname}" -i infra/ansible-inventory.yml --private-key "infra/my_A2_key" -auto-approve
+ansible-playbook ansible/app-clone-playbook.yml -e "db_public_hostname=${db_public_hostname}" -i infra/ansible-inventory.yml --private-key "infra/my_A2_key"
