@@ -17,7 +17,7 @@ terraform init
 echo "Validating Terraform configuration..."
 terraform validate
 echo "Running terraform apply, get ready to review and approve actions..."
-terraform apply
+terraform apply -auto-approve
 
 #return the variable/ip for app and db
 echo "Raw output of instance IPs"
