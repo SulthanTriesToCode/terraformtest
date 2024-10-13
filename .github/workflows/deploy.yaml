@@ -1,23 +1,18 @@
 name: Deploy
-
 on:
     push:
         branches:
             - main
-
 jobs:
     deploy:
         runs-on: ubuntu-latest
-
         steps:
           - name: Checkout repository
             uses: actions/checkout@v2
-
           - name: Install dependencies
             run: |
               sudo apt-get update
               sudo apt-get install -y jq sshpass awscli
-
           - name: Set up AWS CLI
             run: |
               aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -37,11 +32,16 @@ jobs:
             run: |
               cd infra
               terraform init
-
           - name: Run deploy script
             run: |
               chmod +x deploy.sh
               echo yes | ./deploy.sh
+    
+          - name: Run Ansible playbooks
+            run: |
+              ansible-playbook ansible/db-playbook.yml -i infra/ansible-inventory.yml --private-key infra/my_A2_key
+              ansible-playbook ansible/app-playbook.yml -e "db_public_hostname=$(jq -r '.db_public_hostname.value' infra/outputs.json)" -i infra/ansible-inventory.yml --private-key infra/my_A2_key
+              ansible-playbook ansible/app-clone-playbook.yml -e "db_public_hostname=$(jq -r '.db_public_hostname.value' infra/outputs.json)" -i infra/ansible-inventory.yml --private-key infra/my_A2_key
     
           - name: Destroy Terraform on failure
             if: failure()
