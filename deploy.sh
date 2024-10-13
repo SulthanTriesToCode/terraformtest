@@ -8,7 +8,7 @@ aws sts get-caller-identity
 
 cd infra
 
-path_to_ssh_key="my_A2_key" # Also reflected in you.auto.tfvars, but with ".pub" suffix
+path_to_ssh_key="${GITHUB_WORKSPACE}/infra/my_A2_key" # Use absolute path
 echo "Creating SSH keypair ${path_to_ssh_key}..."
 ssh-keygen -C ubuntu@A2 -f "${path_to_ssh_key}" -N ''
 
@@ -32,13 +32,13 @@ app_public_hostname=$(jq -r '.app_public_hostname.value' outputs.json)
 
 #run db playbook yml
 echo "Running ansible to configure app - db"
-cd .. # Back to root of lab
-ansible-playbook ansible/db-playbook.yml -i infra/ansible-inventory.yml --private-key "${GITHUB_WORKSPACE}/infra/my_A2_key"
+cd "${GITHUB_WORKSPACE}" # Back to root of lab
+ansible-playbook ansible/db-playbook.yml -i infra/ansible-inventory.yml --private-key "${path_to_ssh_key}"
 
 #run app playbook yml
 echo "Running ansible to configure App"
-ansible-playbook ansible/app-playbook.yml -e "db_public_hostname=${db_public_hostname}" -i infra/ansible-inventory.yml --private-key "infra/my_A2_key"
+ansible-playbook ansible/app-playbook.yml -e "db_public_hostname=${db_public_hostname}" -i infra/ansible-inventory.yml --private-key "${path_to_ssh_key}"
 
 #run app-clone playbook yml
 echo "Running ansible to configure App Clone"
-ansible-playbook ansible/app-clone-playbook.yml -e "db_public_hostname=${db_public_hostname}" -i infra/ansible-inventory.yml --private-key "infra/my_A2_key"
+ansible-playbook ansible/app-clone-playbook.yml -e "db_public_hostname=${db_public_hostname}" -i infra/ansible-inventory.yml --private-key "${path_to_ssh_key}"
